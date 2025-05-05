@@ -4,21 +4,79 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Collections;
 
 public class IRBRequest : MonoBehaviour
 {
-    private string url = "http://192.168.125.1/rw/motionsystem/mechunits/ROB_1/jointtarget";
+    [Header("Connection")]
+    [SerializeField]
+    private string IpAddress = "192.168.125.1";
+    [SerializeField]
     private string username = "Default User";
+    [SerializeField]
     private string password = "robotics";
+    
+    
+    
 
-    async void Start()
+
+    private bool demoState = false;
+
+    [Header("Request Rate")]
+    [SerializeField]
+    private float requestInterval = 0.1f; // 100ms interval
+
+    private MoveRobot moveRobot;
+
+    [Header("Demo Live Data (Degrees)")]
+    [SerializeField]
+    public bool demo = false;
+    [SerializeField]
+    public float[] sampleData = new float[6]{
+        10,
+        20,
+        30,
+        40,
+        50,
+        60
+    };
+
+    void Start()
     {
-        await GetJointTarget();
+        moveRobot = GetComponent<MoveRobot>();
+        if (moveRobot == null)
+        {
+            Debug.LogError("MoveRobot script not found on this GameObject.");
+        }
+        StartCoroutine(UpdateJointTargetRoutine());
+
     }
 
-    async Task GetJointTarget()
+    private IEnumerator UpdateJointTargetRoutine()
     {
-        try
+        while (true)
+        {
+            yield return StartCoroutine(GetJointTargetCoroutine());
+            yield return new WaitForSeconds(requestInterval); // Wait for 100ms before calling again
+        }
+    }
+
+    private IEnumerator GetJointTargetCoroutine()
+    {
+        string url = "http://" + IpAddress + "/rw/motionsystem/mechunits/ROB_1/jointtarget";
+        if (demo)
+        {
+            if (!demoState)
+            {
+                Debug.Log("Demo mode, Default values set");
+                demoState = true;
+            }
+            for (int i = 0; i < 6; i++)
+            {
+                moveRobot.SetLinkRotation(i + 1, sampleData[i]);
+            }
+        }
+        else
         {
             var handler = new HttpClientHandler
             {
@@ -28,13 +86,22 @@ public class IRBRequest : MonoBehaviour
             using (var client = new HttpClient(handler))
             {
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+                var task = client.GetAsync(url);
+                while (!task.IsCompleted) yield return null;
 
-                HttpResponseMessage response = await client.GetAsync(url);
+                if (task.IsFaulted || task.Result == null)
+                {
+                    Debug.LogError("HTTP request failed");
+                    yield break;
+                }
 
-                Debug.Log("Response Code: " + (int)response.StatusCode);
-                string content = await response.Content.ReadAsStringAsync();
+                var response = task.Result;
+                //Debug.Log("Response Code: " + (int)response.StatusCode);
 
-                // Load XML and parse rax_1
+                var contentTask = response.Content.ReadAsStringAsync();
+                while (!contentTask.IsCompleted) yield return null;
+                var content = contentTask.Result;
+
                 var xmlDoc = new System.Xml.XmlDocument();
                 xmlDoc.LoadXml(content);
                 float[] raxValues = new float[6];
@@ -48,27 +115,15 @@ public class IRBRequest : MonoBehaviour
                     if (node != null && float.TryParse(node.InnerText, out float value))
                     {
                         raxValues[i - 1] = value;
-                        Debug.Log($"{className} value: {value}");
+                        //Debug.Log($"{className} value: {value}");
+                        moveRobot.SetLinkRotation(i, value);
                     }
                     else
                     {
                         Debug.LogWarning($"{className} not found or could not be parsed.");
                     }
                 }
-                /*
-                                // Example: access rax_3
-                                float rax3 = raxValues[2]; // Index 2 == rax_3
-
-                                for (int i = 0; i < raxValues.Length; i++)
-                                {
-                                    Debug.Log($"rax_{i + 1} value: {raxValues[i]}");
-                                }
-                */
             }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("Error fetching joint target: " + ex.Message);
         }
     }
 }
