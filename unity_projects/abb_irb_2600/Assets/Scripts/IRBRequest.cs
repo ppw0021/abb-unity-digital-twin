@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Linq.Expressions;
 
 public class IRBRequest : MonoBehaviour
 {
@@ -15,9 +16,10 @@ public class IRBRequest : MonoBehaviour
     private string username = "Default User";
     [SerializeField]
     private string password = "robotics";
-    
-    
-    
+
+
+    private HttpClient client;
+
 
 
     private bool demoState = false;
@@ -48,7 +50,20 @@ public class IRBRequest : MonoBehaviour
         {
             Debug.LogError("MoveRobot script not found on this GameObject.");
         }
+        if (!demo)
+        {
+            var handler = new HttpClientHandler
+            {
+                Credentials = new NetworkCredential(username, password)
+            };
+            client = new HttpClient(handler);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+            StartCoroutine(UpdateJointTargetRoutine());
+
+        }
         StartCoroutine(UpdateJointTargetRoutine());
+
+
 
     }
 
@@ -64,6 +79,7 @@ public class IRBRequest : MonoBehaviour
     private IEnumerator GetJointTargetCoroutine()
     {
         string url = "http://" + IpAddress + "/rw/motionsystem/mechunits/ROB_1/jointtarget";
+
         if (demo)
         {
             if (!demoState)
@@ -75,55 +91,62 @@ public class IRBRequest : MonoBehaviour
             {
                 moveRobot.SetLinkRotation(i + 1, sampleData[i]);
             }
+            yield break;
         }
-        else
+
+        var task = client.GetAsync(url);
+        while (!task.IsCompleted) yield return null;
+
+        if (task.IsFaulted || task.Result == null)
         {
-            var handler = new HttpClientHandler
-            {
-                Credentials = new NetworkCredential(username, password)
-            };
+            Debug.LogError("HTTP request failed");
+            yield break;
+        }
 
-            using (var client = new HttpClient(handler))
-            {
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
-                var task = client.GetAsync(url);
-                while (!task.IsCompleted) yield return null;
+        var response = task.Result;
+        var contentTask = response.Content.ReadAsStringAsync();
+        while (!contentTask.IsCompleted) yield return null;
+        var content = contentTask.Result;
 
-                if (task.IsFaulted || task.Result == null)
+        bool proceed = true;
+        var xmlDoc = new System.Xml.XmlDocument();
+        try
+        {
+            xmlDoc.LoadXml(content);
+        }
+        catch
+        {
+            Debug.Log("Catch block reached");
+            proceed = false;
+        }
+
+        if (proceed)
+        {
+            for (int i = 1; i <= 6; i++)
+            {
+                string className = $"rax_{i}";
+                string xpath = $"//*[local-name()='span' and @class='{className}']";
+                var node = xmlDoc.SelectSingleNode(xpath);
+
+                if (node != null && float.TryParse(node.InnerText, out float value))
                 {
-                    Debug.LogError("HTTP request failed");
-                    yield break;
+                    moveRobot.SetLinkRotation(i, value);
                 }
-
-                var response = task.Result;
-                //Debug.Log("Response Code: " + (int)response.StatusCode);
-
-                var contentTask = response.Content.ReadAsStringAsync();
-                while (!contentTask.IsCompleted) yield return null;
-                var content = contentTask.Result;
-
-                var xmlDoc = new System.Xml.XmlDocument();
-                xmlDoc.LoadXml(content);
-                float[] raxValues = new float[6];
-
-                for (int i = 1; i <= 6; i++)
+                else
                 {
-                    string className = $"rax_{i}";
-                    string xpath = $"//*[local-name()='span' and @class='{className}']";
-                    var node = xmlDoc.SelectSingleNode(xpath);
-
-                    if (node != null && float.TryParse(node.InnerText, out float value))
-                    {
-                        raxValues[i - 1] = value;
-                        //Debug.Log($"{className} value: {value}");
-                        moveRobot.SetLinkRotation(i, value);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"{className} not found or could not be parsed.");
-                    }
+                    Debug.LogWarning($"{className} not found or could not be parsed.");
                 }
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (client != null)
+        {
+            client.Dispose();
+            client = null;
+            Debug.Log("HttpClient disposed. Session Ended.");
         }
     }
 }
