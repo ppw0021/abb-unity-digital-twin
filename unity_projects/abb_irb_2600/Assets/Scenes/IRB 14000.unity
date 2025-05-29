@@ -811,7 +811,7 @@ MonoBehaviour:
   IpAddress: 192.168.125.1
   username: Default User
   password: robotics
-  requestInterval: 0.1
+  requestInterval: 0.025
   ROB_R: {fileID: 753824891}
   ROB_L: {fileID: 753824898}
   demo: 0
