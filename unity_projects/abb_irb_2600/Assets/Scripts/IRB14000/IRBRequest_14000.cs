@@ -47,6 +47,15 @@ public class IRBRequest_14000 : MonoBehaviour
         60,
         70
     };
+    public float[] sampleData2 = new float[7]{
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70
+    };
 
     void Start()
     {
@@ -104,7 +113,7 @@ public class IRBRequest_14000 : MonoBehaviour
                         ROB_R.SetLinkRotation(i + 1, sampleData[i]);
                         break;
                     case "ROB_L":
-                        ROB_L.SetLinkRotation(i + 1, sampleData[i]);
+                        ROB_L.SetLinkRotation(i + 1, sampleData2[i]);
                         break;
                     default:
                         Debug.LogError("Invalid robot name: " + robotName);
