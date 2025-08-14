@@ -36,7 +36,7 @@ public class UDPClient : MonoBehaviour
 
     void Update()
     {
-
+        
     }
 
     private async Task SendUDPRequestToServerAsync()
@@ -54,6 +54,8 @@ public class UDPClient : MonoBehaviour
 
         UdpReceiveResult result = await client.ReceiveAsync();
 
-        Debug.Log(result.ToString());
+        string recv = Encoding.ASCII.GetString(result.Buffer, 0, result.Buffer.Length);
+
+        Debug.Log($"Received: {recv}");
     }
 }
