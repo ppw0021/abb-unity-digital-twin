@@ -27,12 +27,13 @@ def ListenForUDP(server):
     print("Waiting to accept UDP connection")
     messageRecv, address = server.recvfrom(2024)
     
-    message = "Hello from server".encode()
+    # message = "Hello from server".encode()
+
+    message = robotDataInstance.GetJSONData().encode()
 
     print(f"Received message: {messageRecv.decode()}")
 
     server.sendto(message, address)
-
 
 def UDPThread():
     server = socket(AF_INET, SOCK_DGRAM)
@@ -40,12 +41,6 @@ def UDPThread():
 
     while True:
         ListenForUDP(server)
-
-# def BlockingInput():
-#     while True:
-#         print("Please input ur name: ")
-#         userInput = input()
-#         print(f"Hello {userInput}")
 
 def GetRobotData():
     while True:
@@ -60,7 +55,6 @@ robotDataInstance = RobotData()
 
 threads = []
 threads.append(threading.Thread(target=UDPThread))
-# threads.append(threading.Thread(target=BlockingInput))
 threads.append(threading.Thread(target=GetRobotData))
 for t in threads:
     t.start()
