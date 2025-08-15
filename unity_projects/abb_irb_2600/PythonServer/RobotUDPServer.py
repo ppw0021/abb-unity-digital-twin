@@ -3,8 +3,6 @@ import threading
 import json
 import time
 
-
-
 class RobotData:
     jsonString = "{\"message\":\"no_data\"}"
 
