@@ -5,40 +5,45 @@ using UnityEngine.UI;
 using System.Threading.Tasks;
 using System;
 using UnityEditor.PackageManager;
+using System.Collections;
 
 [SerializeField]
 public class IRB2600
 {
-    public double joint1;
-    public double joint2;
-    public double joint3;
-    public double joint4;
-    public double joint5;
-    public double joint6;
+    public double joint_1;
+    public double joint_2;
+    public double joint_3;
+    public double joint_4;
+    public double joint_5;
+    public double joint_6;
 }
 public class UDPClient : MonoBehaviour
 {
-    [SerializeField]
-    private Button RequestButton;
+    // [SerializeField]
+    // private Button RequestButton;
     [SerializeField]
     private string serverIP = "127.0.0.1";
     [SerializeField]
     private int port = 9999;
-
     private UdpClient client;
-    public void Start()
+    [SerializeField]
+    int requestInterval = 200;
+    private UDPMoveRobot moveRobot;
+    public async Task Start()
     {
-        RequestButton.onClick.AddListener(async () =>
+        // RequestButton.onClick.AddListener(async () =>
+        // {
+        //     await SendUDPRequestToServerAsync();
+        // });
+
+        moveRobot = GetComponent<UDPMoveRobot>();
+        if (moveRobot == null)
         {
-            await SendUDPRequestToServerAsync();
-        });
-    }
+            Debug.LogError("MoveRobot script not found on this GameObject.");
+        }
 
-    void Update()
-    {
-        
+        await MainRepeatingLoop();
     }
-
     private async Task SendUDPRequestToServerAsync()
     {
         client = new UdpClient();
@@ -50,12 +55,36 @@ public class UDPClient : MonoBehaviour
 
         await client.SendAsync(data, data.Length);
 
-        byte[] buffer = new byte[1024];
+        // byte[] buffer = new byte[1024];
 
         UdpReceiveResult result = await client.ReceiveAsync();
 
         string recv = Encoding.ASCII.GetString(result.Buffer, 0, result.Buffer.Length);
 
-        Debug.Log($"Received: {recv}");
+        IRB2600 robotDataIn = new IRB2600();
+
+        try
+        {
+            robotDataIn = JsonUtility.FromJson<IRB2600>(recv);
+            Debug.Log("Successfully Objectified");
+            moveRobot.SetLinkRotation(robotDataIn);
+            Debug.Log($"Joint 1: {robotDataIn.joint_1}");
+        }
+        catch
+        {
+            Debug.Log("Didn't work lol");
+        }
+
+        // Debug.Log($"Received: {result}");
+    }
+
+    private async Task<IEnumerator> MainRepeatingLoop()
+    {
+        while (true && Application.isPlaying)
+        {
+            await SendUDPRequestToServerAsync();
+            await Task.Delay(requestInterval);
+        }
+        return null;
     }
 }

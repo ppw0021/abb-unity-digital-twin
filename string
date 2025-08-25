@@ -1,0 +1,8 @@
+as bytes: (result.content)
+
+
+b'<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>motionsystem</title><base href="http://192.168.0.20:80/rw/motionsystem/mechunits/ROB_1/jointtarget/"/></head><body><div class="state"><a href= "" rel="self"/> <ul> <li class="ms-jointtarget" title="ROB_1"> <span class="rax_1">6.23673534393311</span> <span class="rax_2">-1.55841481685638</span> <span class="rax_3">-0.758359551429749</span> <span class="rax_4">0.432930588722229</span> <span class="rax_5">20.8187522888184</span> <span class="rax_6">-0.545539200305939</span> <span class="eax_a">0</span> <span class="eax_b">0</span> <span class="eax_c">0</span> <span class="eax_d">0</span> <span class="eax_e">0</span> <span class="eax_f">0</span> </li> </ul></div></body></html>'
+
+as string: (result.text)
+
+<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>motionsystem</title><base href="http://192.168.0.20:80/rw/motionsystem/mechunits/ROB_1/jointtarget/"/></head><body><div class="state"><a href= "" rel="self"/> <ul> <li class="ms-jointtarget" title="ROB_1"> <span class="rax_1">6.23677921295166</span> <span class="rax_2">-1.55841481685638</span> <span class="rax_3">-0.758403122425079</span> <span class="rax_4">0.433388352394104</span> <span class="rax_5">20.8189830780029</span> <span class="rax_6">-0.54540228843689</span> <span class="eax_a">0</span> <span class="eax_b">0</span> <span class="eax_c">0</span> <span class="eax_d">0</span> <span class="eax_e">0</span> <span class="eax_f">0</span> </li> </ul></div></body></html>
