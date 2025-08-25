@@ -959,7 +959,7 @@ PrefabInstance:
       objectReference: {fileID: 751540156}
     - target: {fileID: 3553907523651760854, guid: 73b7f0547eb32ffd4bcc54a994d34da5, type: 3}
       propertyPath: requestInterval
-      value: 1000
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3886789071032551371, guid: 73b7f0547eb32ffd4bcc54a994d34da5, type: 3}
       propertyPath: m_Name
