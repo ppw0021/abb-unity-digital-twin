@@ -7,6 +7,12 @@ from requests.auth import HTTPDigestAuth
 from bs4 import BeautifulSoup
 import sys
 
+# Network config
+PORT = 9999
+
+# Packet counts
+packetSendCount = 0
+robotRequestCount = 0
 
 # If not connected to robot
 DEMO = True
@@ -29,15 +35,26 @@ class RobotData:
     def GetJSONData(self):
         return self.jsonString
 
+def PrintPanel():
+    print(
+        f"\rServer: {gethostbyname(gethostname())}:{PORT} | "
+        f"UDP Sent: {packetSendCount} | "
+        f"Robot Recv: {robotRequestCount}",
+        end="",
+        flush=True
+    )
+
 def ListenForUDP(server):
-    print("Waiting to accept UDP connection")
+    global packetSendCount
+    PrintPanel()
+    # print("Waiting to accept UDP connection")
     messageRecv, address = server.recvfrom(1024)
     
     # message = "Hello from server".encode()
 
     message = robotDataInstance.GetJSONData().encode()
-
-    print(f"Received message: {messageRecv.decode()}")
+    packetSendCount += 1
+    # print(f"Received message: {messageRecv.decode()}")
 
     server.sendto(message, address)
 
@@ -46,11 +63,12 @@ def UDPThread():
     server.bind(('0.0.0.0', 9999))
 
     while True:
-        try:
-            ListenForUDP(server)
-        except:
-            # why the hell is this throwing an error every 10-20 seconds????
-            print("Error?")
+        ListenForUDP(server)
+        # try:
+        #     ListenForUDP(server)
+        # except:
+        #     # why the hell is this throwing an error every 10-20 seconds????
+        #     print("Error?")
 
 def ProcessXML(xmlIn):
     soup = BeautifulSoup(xmlIn, "html.parser")
@@ -62,34 +80,41 @@ def ProcessXML(xmlIn):
     return valuesToReturn
 
 def GetRobotData():
-    demo = DEMO
-    updateRate = 0.01
-    url = "http://192.168.0.20/rw/motionsystem/mechunits/ROB_1/jointtarget"
-    # url = "/rw/motionsystem/mechunits/ROB_1/jointtarget"
-    while True:
-        # print("---------------------------------------------------")
-        # print("Requesting Data")
-        stringResult = ""
-        startTime = time.time()
-        if demo == True:
-            #robotDataInstance.SetJSONData(1.1, 2.2, 3.3, 4.4, 5.5, 6.6)
-            #print("New JSON: " + robotDataInstance.GetJSONData())
-            #print("Updated")
-            stringResult = '<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>motionsystem</title><base href="http://192.168.0.20:80/rw/motionsystem/mechunits/ROB_1/jointtarget/"/></head><body><div class="state"><a href= "" rel="self"/> <ul> <li class="ms-jointtarget" title="ROB_1"> <span class="rax_1">1.1</span> <span class="rax_2">2.2</span> <span class="rax_3">3.3</span> <span class="rax_4">4.4</span> <span class="rax_5">-5.5</span> <span class="rax_6">-6.6</span> <span class="eax_a">0</span> <span class="eax_b">0</span> <span class="eax_c">0</span> <span class="eax_d">0</span> <span class="eax_e">0</span> <span class="eax_f">0</span> </li> </ul></div></body></html>'
-            time.sleep(updateRate)
-        if demo == False:
-            stringResult = requests.get(url, auth=HTTPDigestAuth("Default User", "robotics"), headers={"Accept": "application/xml"}).text
-            # print(f"Result: <{result.text}>")
-            # jsonRecDict =
-            time.sleep(updateRate)
-        endTime = time.time()
-        elapsedTime = round(endTime-startTime,4)
-        rax_values = ProcessXML(stringResult)
-        
-        robotDataInstance.SetJSONData(rax_values["rax_1"], rax_values["rax_2"], rax_values["rax_3"], rax_values["rax_4"], rax_values["rax_5"], rax_values["rax_6"])
-    
-        # print(stringResult)
-        print(f"Took {elapsedTime}")
+    global robotRequestCount
+    demo = True
+    updateRate = 0.1
+    url = "http://192.168.125.1/rw/motionsystem/mechunits/ROB_1/jointtarget"
+
+    with requests.Session() as session:  # session handles connection reuse + cleanup
+        session.auth = HTTPDigestAuth("Default User", "robotics")
+        session.headers.update({"Accept": "application/xml"})
+
+        while True:
+            robotRequestCount += 1
+            startTime = time.time()
+            if demo:
+                stringResult = '<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>motionsystem</title><base href="http://192.168.0.20:80/rw/motionsystem/mechunits/ROB_1/jointtarget/"/></head><body><div class="state"><a href= "" rel="self"/> <ul> <li class="ms-jointtarget" title="ROB_1"> <span class="rax_1">1.1</span> <span class="rax_2">2.2</span> <span class="rax_3">3.3</span> <span class="rax_4">4.4</span> <span class="rax_5">-5.5</span> <span class="rax_6">-6.6</span> <span class="eax_a">0</span> <span class="eax_b">0</span> <span class="eax_c">0</span> <span class="eax_d">0</span> <span class="eax_e">0</span> <span class="eax_f">0</span> </li> </ul></div></body></html>'
+                time.sleep(updateRate)
+            else:
+                response = session.get(url)   # uses same connection if possible
+                stringResult = response.text
+                response.close()  # releases the connection back to pool
+                time.sleep(updateRate)
+
+            rax_values = ProcessXML(stringResult)
+            try:
+                robotDataInstance.SetJSONData(
+                    rax_values["rax_1"], rax_values["rax_2"], rax_values["rax_3"],
+                    rax_values["rax_4"], rax_values["rax_5"], rax_values["rax_6"]
+                )
+            except KeyError:
+                print("Failed")
+
+            elapsedTime = round(time.time() - startTime, 4)
+            # print(stringResult)
+            # print(f"Took {elapsedTime}")
+            PrintPanel()
+
 
 
 robotDataInstance = RobotData()
