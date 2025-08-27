@@ -1,0 +1,1 @@
+https://github.com/ros-industrial/abb/blob/noetic-devel/abb_irb2600_support/meshes/irb2600_12_165/visual
