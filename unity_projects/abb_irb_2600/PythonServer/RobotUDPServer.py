@@ -17,6 +17,21 @@ robotRequestCount = 0
 # If not connected to robot
 DEMO = True
 
+class RobotDemo:
+    joints = [-170, -160, -150, -140, -130, -120]
+
+    def ReturnXML(self):
+        increaseRate = 5
+        maxJoint = 180
+        minJoint = -180
+        for i in range(6):
+            if (self.joints[i] > maxJoint):
+                self.joints[i] = minJoint
+            else:
+                self.joints[i] += increaseRate
+        return f'<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><body><li class="ms-jointtarget"><span class="rax_1">{self.joints[0]}</span><span class="rax_2">{self.joints[1]}</span><span class="rax_3">{self.joints[2]}</span><span class="rax_4">{self.joints[3]}</span><span class="rax_5">{self.joints[4]}</span><span class="rax_6">{self.joints[5]}</span></li></body></html>'
+
+
 class RobotData:
     jsonString = "{\"message\":\"no_data\"}"
 
@@ -93,7 +108,7 @@ def GetRobotData():
             robotRequestCount += 1
             startTime = time.time()
             if demo:
-                stringResult = '<?xml version="1.0" encoding="UTF-8"?><html xmlns="http://www.w3.org/1999/xhtml"><head><title>motionsystem</title><base href="http://192.168.0.20:80/rw/motionsystem/mechunits/ROB_1/jointtarget/"/></head><body><div class="state"><a href= "" rel="self"/> <ul> <li class="ms-jointtarget" title="ROB_1"> <span class="rax_1">1.1</span> <span class="rax_2">2.2</span> <span class="rax_3">3.3</span> <span class="rax_4">4.4</span> <span class="rax_5">-5.5</span> <span class="rax_6">-6.6</span> <span class="eax_a">0</span> <span class="eax_b">0</span> <span class="eax_c">0</span> <span class="eax_d">0</span> <span class="eax_e">0</span> <span class="eax_f">0</span> </li> </ul></div></body></html>'
+                stringResult = robotDemoInstance.ReturnXML()
                 time.sleep(updateRate)
             else:
                 response = session.get(url)   # uses same connection if possible
@@ -118,6 +133,7 @@ def GetRobotData():
 
 
 robotDataInstance = RobotData()
+robotDemoInstance = RobotDemo()
 
 
 try:

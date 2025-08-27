@@ -1168,7 +1168,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1467760598}
         m_TargetAssemblyTypeName: UDPClient, Assembly-CSharp
-        m_MethodName: StartComm
+        m_MethodName: StopComm
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1802,6 +1802,10 @@ PrefabInstance:
       propertyPath: requestInterval
       value: 200
       objectReference: {fileID: 0}
+    - target: {fileID: 3553907523651760854, guid: 73b7f0547eb32ffd4bcc54a994d34da5, type: 3}
+      propertyPath: disconnectButton
+      value: 
+      objectReference: {fileID: 1078714825}
     - target: {fileID: 3886789071032551371, guid: 73b7f0547eb32ffd4bcc54a994d34da5, type: 3}
       propertyPath: m_Name
       value: IRB2600 (UDP)

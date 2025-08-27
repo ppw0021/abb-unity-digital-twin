@@ -3,11 +3,8 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine.UI;
 using System.Threading.Tasks;
-using System;
-//using UnityEditor.PackageManager;
 using System.Collections;
 using TMPro;
-// using NUnit.Framework.Constraints;
 using System.Text.RegularExpressions;
 
 [SerializeField]
@@ -34,7 +31,7 @@ public class UDPClient : MonoBehaviour
     private int port = 9999;
     private UdpClient client;
     [SerializeField]
-    int requestInterval = 200;
+    int requestInterval = 100;
     private UDPMoveRobot moveRobot;
     public bool connectedFlag = false;
     public async Task Start()
