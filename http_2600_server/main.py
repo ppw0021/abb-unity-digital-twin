@@ -7,6 +7,7 @@ from requests.auth import HTTPDigestAuth
 from bs4 import BeautifulSoup
 import sys
 from flask import Flask
+from flask_cors import CORS
 import logging
 
 # Network config
@@ -48,7 +49,7 @@ class RobotData:
         }
         self.jsonString = json.dumps(jsonDict)
         return
-    
+
     def GetJSONData(self):
         return self.jsonString
 
@@ -62,6 +63,7 @@ def PrintPanel():
     )
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/joints")
 def hello_world():
@@ -130,7 +132,7 @@ try:
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.ERROR)
 
-    app.run(debug=False, port=8000)
+    app.run(host="0.0.0.0", port=8000)
 
     for t in threads:
         t.join()
