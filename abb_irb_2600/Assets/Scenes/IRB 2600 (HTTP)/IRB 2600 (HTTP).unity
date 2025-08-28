@@ -730,8 +730,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UDPClient, Assembly-CSharp
+      - m_Target: {fileID: 7755752689999256315}
+        m_TargetAssemblyTypeName: HTTPClient, Assembly-CSharp
         m_MethodName: StartComm
         m_Mode: 1
         m_Arguments:
@@ -1186,8 +1186,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: UDPClient, Assembly-CSharp
+      - m_Target: {fileID: 7755752689999256315}
+        m_TargetAssemblyTypeName: HTTPClient, Assembly-CSharp
         m_MethodName: StopComm
         m_Mode: 1
         m_Arguments:
@@ -1846,6 +1846,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 751540156}
     - target: {fileID: 9120404248116475563, guid: 2851404fa2d459a558c49ef025576996, type: 3}
+      propertyPath: requestInterval
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9120404248116475563, guid: 2851404fa2d459a558c49ef025576996, type: 3}
       propertyPath: disconnectButton
       value: 
       objectReference: {fileID: 1078714825}
@@ -1855,14 +1859,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4265401145059842810, guid: 2851404fa2d459a558c49ef025576996, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7755752689999256316}
+      addedObject: {fileID: 7755752689999256314}
   m_SourcePrefab: {fileID: 100100000, guid: 2851404fa2d459a558c49ef025576996, type: 3}
 --- !u!1 &7755752689999256313 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4265401145059842810, guid: 2851404fa2d459a558c49ef025576996, type: 3}
   m_PrefabInstance: {fileID: 6667092562260781238}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7755752689999256316
+--- !u!114 &7755752689999256314
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1871,7 +1875,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7755752689999256313}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad305c129cd956d4c89237403742c134, type: 3}
+  m_Script: {fileID: 11500000, guid: 70bd5d1fd3ce1acefbfd4b8171763be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   robotLinks:
@@ -1888,10 +1892,10 @@ MonoBehaviour:
   link5_rotation: 0
   link6_rotation: 0
   invert1: 0
-  invert2: 0
+  invert2: 1
   invert3: 0
-  invert4: 0
-  invert5: 0
+  invert4: 1
+  invert5: 1
   invert6: 0
   offset1: 0
   offset2: 0
@@ -1900,7 +1904,18 @@ MonoBehaviour:
   offset5: 0
   offset6: 0
   smooth: 1
-  smoothingSpeed: 10
+  smoothingSpeed: 3
+--- !u!114 &7755752689999256315 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9120404248116475563, guid: 2851404fa2d459a558c49ef025576996, type: 3}
+  m_PrefabInstance: {fileID: 6667092562260781238}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7755752689999256313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 222f8ffccb72a4aaf8f9cb2abd435b21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

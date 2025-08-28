@@ -61,15 +61,7 @@ def PrintPanel():
         flush=True
     )
 
-
-
 app = Flask(__name__)
-
-# def HTTPServerThread():
-#     while True:
-#         global packetSendCount
-#         packetSendCount += 1
-#         PrintPanel()
 
 @app.route("/joints")
 def hello_world():
