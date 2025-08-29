@@ -56,7 +56,7 @@ class RobotData:
 def PrintPanel():
     print(
         f"\rServer: {gethostbyname(gethostname())}:{PORT} | "
-        f"UDP Sent: {packetSendCount} | "
+        f"HTTP Sent: {packetSendCount} | "
         f"Robot Recv: {robotRequestCount}",
         end="",
         flush=True
