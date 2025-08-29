@@ -9,20 +9,20 @@ using System.Text;
 public class HTTPClient : MonoBehaviour
 {
     [SerializeField]
-    private string serverIP = "127.0.0.1";
-    [SerializeField]
-    private TMP_InputField inputField;
-    [SerializeField]
-    private Button connectButton;
-    [SerializeField]
-    private Button disconnectButton;
+    private string serverIP = "192.168.1.69";
+    // [SerializeField]
+    // private TMP_InputField inputField;
+    // [SerializeField]
+    // private Button connectButton;
+    // [SerializeField]
+    // private Button disconnectButton;
     [SerializeField]
     private int port = 8000;
     [SerializeField]
-    private float requestInterval = 0.1f;
+    private float requestInterval = 0.2f;
     private UDPMoveRobot moveRobot;
     [SerializeField]
-    private bool connectedFlag = false;
+    private bool connectedFlag = true;
 
     public void Start()
     {
@@ -36,7 +36,7 @@ public class HTTPClient : MonoBehaviour
     }
     public void StartComm()
     {
-        serverIP = inputField.text;
+        // serverIP = inputField.text;
         connectedFlag = true;
     }
 
@@ -77,7 +77,7 @@ public class HTTPClient : MonoBehaviour
                 }
                 catch
                 {
-                    Debug.Log("Didn't work lol");
+                    Debug.Log("Failed to Transact Server Data");
                 }
             }
             yield return new WaitForSeconds(requestInterval);
@@ -86,17 +86,17 @@ public class HTTPClient : MonoBehaviour
 
     public void Update()
     {
-        if (connectedFlag)
-        {
-            inputField.interactable = false;
-            connectButton.interactable = false;
-            disconnectButton.interactable = true;
-        }
-        else
-        {
-            inputField.interactable = true;
-            connectButton.interactable = true;
-            disconnectButton.interactable = false;
-        }
+        // if (connectedFlag)
+        // {
+        //     inputField.interactable = false;
+        //     connectButton.interactable = false;
+        //     disconnectButton.interactable = true;
+        // }
+        // else
+        // {
+        //     inputField.interactable = true;
+        //     connectButton.interactable = true;
+        //     disconnectButton.interactable = false;
+        // }
     }
 }
