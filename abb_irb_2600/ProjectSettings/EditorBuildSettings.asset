@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/IRB 2600 (HTTP)/IRB 2600 (HTTP).unity
-    guid: 41df84dec7c7e0b9b8c4a53224219f46
+    path: Assets/Scenes/DEMO/DemoScene.unity
+    guid: 3b62281506660f647b90d9dd7d2c30ab
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

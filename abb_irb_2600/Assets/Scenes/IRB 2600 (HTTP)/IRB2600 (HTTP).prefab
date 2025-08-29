@@ -271,6 +271,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5660507953256687225}
   - component: {fileID: 9120404248116475563}
+  - component: {fileID: 3688992331583318332}
   m_Layer: 0
   m_Name: IRB2600 (HTTP)
   m_TagString: Untagged
@@ -306,13 +307,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 222f8ffccb72a4aaf8f9cb2abd435b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverIP: 127.0.0.1
-  inputField: {fileID: 0}
-  connectButton: {fileID: 0}
-  disconnectButton: {fileID: 0}
-  port: 9999
-  requestInterval: 100
-  connectedFlag: 0
+  serverIP: 192.168.1.69
+  port: 8000
+  requestInterval: 0.05
+  connectedFlag: 1
+--- !u!114 &3688992331583318332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4265401145059842810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70bd5d1fd3ce1acefbfd4b8171763be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robotLinks:
+    link1: {fileID: 1129153773171688906}
+    link2: {fileID: 5554024925492631866}
+    link3: {fileID: 9004961794850861162}
+    link4: {fileID: 9182993664015060456}
+    link5: {fileID: 2357340680532801255}
+    link6: {fileID: 7208827923217573513}
+  link1_rotation: 0
+  link2_rotation: 0
+  link3_rotation: 0
+  link4_rotation: 0
+  link5_rotation: 0
+  link6_rotation: 0
+  invert1: 1
+  invert2: 1
+  invert3: 1
+  invert4: 0
+  invert5: 1
+  invert6: 0
+  offset1: 0
+  offset2: 0
+  offset3: 0
+  offset4: 0
+  offset5: 0
+  offset6: 0
+  smooth: 1
+  smoothingSpeed: 9
 --- !u!1 &5554024925492631866
 GameObject:
   m_ObjectHideFlags: 0
