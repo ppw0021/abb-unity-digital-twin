@@ -5080,7 +5080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6f2d99183baa2b49acf3ce947c71d71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shouldRotate: 1
+  shouldRotate: 0
   rotationSpeed: {x: 0, y: 2, z: 0}
   dragSensitivity: 0.5
 --- !u!1001 &1877640882
